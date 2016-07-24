@@ -10,14 +10,25 @@ import UIKit
 
 class TableViewController: UITableViewController {
 
+    var eachRecipientsMessage : Set<Message> = []
     
     var managedMessageObjects: [Message] = []
+    
+    // Enables us to access our Datastore singleton:
     let store: DataStore = DataStore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        store.fetchData()
+        // Adds our NSSet objects to our Messages array.
+        for message in eachRecipientsMessage {
+            
+            self.managedMessageObjects.append(message)
+            
+        }
+        
+        // Fetches data and updates your local messages:
+        self.store.fetchData()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -25,15 +36,15 @@ class TableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
-        
-        
     }
     
     override func viewWillAppear(animated: Bool) {
-        
         super.viewWillAppear(true)
         
-        store.fetchData()
+        // Fetches data and updates your local messages:
+        self.store.fetchData()
+        
+        // Reloads the tableView
         tableView.reloadData()
         
     }
@@ -51,16 +62,14 @@ class TableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return store.messages.count
+        return self.eachRecipientsMessage.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("basicCell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("messageCell", forIndexPath: indexPath)
         
-        let eachMessage = store.messages[indexPath.row]
-        
-        cell.textLabel?.text = eachMessage.content
+        cell.textLabel?.text = self.managedMessageObjects[indexPath.row].content
         
         return cell
     }
